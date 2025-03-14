@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.easyar.sense": {
-      "version": "file:D:/SchoolLearningFolder/Postgraduate/WQY/EasyARTester/EasyARSenseUnityPlugin_4.6.5+3052.b2f1b028/com.easyar.sense-4.6.5+3052.b2f1b028.tgz",
+      "version": "file:com.easyar.sense",
       "depth": 0,
-      "source": "local-tarball",
+      "source": "embedded",
       "dependencies": {
         "com.unity.ugui": "1.0.0"
       }
