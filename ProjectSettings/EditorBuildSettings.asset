@@ -115,3 +115,4 @@ EditorBuildSettings:
     guid: 8c9dc777120123c4297fe062a888f708
   m_configObjects:
     EasyAR.Settings: {fileID: 11400000, guid: 09fd0127780840f4fbe2352362f52c6f, type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: d26fedafb8e03cb42a02d423d0de216a, type: 2}
