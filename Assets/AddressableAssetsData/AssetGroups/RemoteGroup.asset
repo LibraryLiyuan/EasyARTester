@@ -10,15 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: RemoteGroup
   m_EditorClassIdentifier: 
-  m_GroupName: Default Local Group
+  m_GroupName: RemoteGroup
   m_Data:
     m_SerializedData: []
-  m_GUID: aaeac9eae8ad4664594fbd686213304c
+  m_GUID: 1efb73686f188b44880ba62317c4f42e
   m_SerializeEntries:
-  - m_GUID: 555bf09fb0255f6408b3acce05713f49
-    m_Address: Assets/Test/Cylinder.prefab
+  - m_GUID: 795c077f1811fb9428f809bc709d46c7
+    m_Address: Assets/Test/Cube.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1fbf6eb30a595794b97aca6dec52cde5
+    m_Address: Assets/Test/Sphere.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,5 +31,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 334108695b1d36541ab235d8265b3031, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 19929bd38a7365a40b74ff99dadbbc03, type: 2}
-    - {fileID: 11400000, guid: 4251abeba4e8c174d8346da7df3016a3, type: 2}
+    - {fileID: 11400000, guid: 198df48b7bafb2b459081f9262ec9b8f, type: 2}
+    - {fileID: 11400000, guid: d0cb9728a2e61e94494781cac0965ed5, type: 2}
