@@ -7,8 +7,12 @@
 //================================================================================================================================
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using PackagesEasyAR.Util;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace easyar
 {
@@ -39,6 +43,7 @@ namespace easyar
                         EditorGUILayout.PropertyField(serializedObject.FindProperty("ImageFileSource.Name"), true);
                         EditorGUILayout.PropertyField(serializedObject.FindProperty("ImageFileSource.Scale"), true);
                     }
+
                     EditorGUI.indentLevel -= 1;
                     break;
                 case ImageTargetController.DataSource.TargetDataFile:
@@ -50,6 +55,7 @@ namespace easyar
                         EditorGUILayout.PropertyField(serializedObject.FindProperty("TargetDataFileSource.PathType"), true);
                         EditorGUILayout.PropertyField(serializedObject.FindProperty("TargetDataFileSource.Path"), true);
                     }
+
                     EditorGUI.indentLevel -= 1;
                     break;
                 default:
@@ -66,11 +72,13 @@ namespace easyar
                 {
                     tracker.objectReferenceValue = FindObjectOfType<ImageTrackerFrameFilter>();
                 }
+
                 if (tracker.objectReferenceValue)
                 {
                     trackerHasSet.boolValue = true;
                 }
             }
+
             serializedObject.ApplyModifiedProperties();
             controller.Tracker = (ImageTrackerFrameFilter)tracker.objectReferenceValue;
 
@@ -93,6 +101,7 @@ namespace easyar
             {
                 return;
             }
+
             var controller = (ImageTargetController)target;
             if (controller.SourceType == ImageTargetController.DataSource.ImageFile)
             {
@@ -135,11 +144,13 @@ namespace easyar
             {
                 return;
             }
+
             var vec3Unit = Vector3.one;
             if (controller.HorizontalFlip)
             {
                 vec3Unit.x = -vec3Unit.x;
             }
+
             controller.transform.localScale = vec3Unit * s;
 
             controller.GizmoData.Scale = s;
@@ -154,19 +165,32 @@ namespace easyar
             switch (scr.SourceType)
             {
                 case ImageTargetController.DataSource.ImageFile:
-                    if (EasyARSettings.Instance && !EasyARSettings.Instance.GizmoConfig.ImageTarget.EnableImageFile) { return; }
+                    if (EasyARSettings.Instance && !EasyARSettings.Instance.GizmoConfig.ImageTarget.EnableImageFile)
+                    {
+                        return;
+                    }
+
                     signature += scr.ImageFileSource.PathType.ToString() + scr.ImageFileSource.Path;
                     break;
                 case ImageTargetController.DataSource.TargetDataFile:
-                    if (EasyARSettings.Instance && !EasyARSettings.Instance.GizmoConfig.ImageTarget.EnableTargetDataFile) { return; }
+                    if (EasyARSettings.Instance && !EasyARSettings.Instance.GizmoConfig.ImageTarget.EnableTargetDataFile)
+                    {
+                        return;
+                    }
+
                     signature += scr.TargetDataFileSource.PathType.ToString() + scr.TargetDataFileSource.Path;
                     break;
                 case ImageTargetController.DataSource.Target:
-                    if (EasyARSettings.Instance && !EasyARSettings.Instance.GizmoConfig.ImageTarget.EnableTarget) { return; }
+                    if (EasyARSettings.Instance && !EasyARSettings.Instance.GizmoConfig.ImageTarget.EnableTarget)
+                    {
+                        return;
+                    }
+
                     if (scr.Target != null)
                     {
                         signature += scr.Target.runtimeID().ToString();
                     }
+
                     break;
                 default:
                     break;
@@ -176,6 +200,7 @@ namespace easyar
             {
                 scr.GizmoData.Material = new Material(Shader.Find("EasyAR/ImageTargetGizmo"));
             }
+
             if (scr.GizmoData.Signature != signature)
             {
                 if (scr.GizmoData.Texture != null)
@@ -193,18 +218,38 @@ namespace easyar
                         {
                             path = Application.streamingAssetsPath + "/" + scr.ImageFileSource.Path;
                         }
-                        if (System.IO.File.Exists(path))
+
+                        if (scr.ImageFileSource.PathType == PathType.Addressable)
                         {
-                            var sourceData = System.IO.File.ReadAllBytes(path);
-                            scr.GizmoData.Texture = new Texture2D(2, 2);
-                            scr.GizmoData.Texture.LoadImage(sourceData);
-                            scr.GizmoData.Texture.Apply();
-                            UpdateScale(scr, scr.ImageFileSource.Scale);
-                            if (SceneView.lastActiveSceneView)
+                            if (AddressableExtension.TryGetAssetEntryFromAddr(path, out var entry))
                             {
-                                SceneView.lastActiveSceneView.Repaint();
+                                var sourceData = System.IO.File.ReadAllBytes($"{System.IO.Directory.GetCurrentDirectory()}\\{entry.AssetPath}");
+                                scr.GizmoData.Texture = new Texture2D(2, 2);
+                                scr.GizmoData.Texture.LoadImage(sourceData);
+                                scr.GizmoData.Texture.Apply();
+                                UpdateScale(scr, scr.ImageFileSource.Scale);
+                                if (SceneView.lastActiveSceneView)
+                                {
+                                    SceneView.lastActiveSceneView.Repaint();
+                                }
                             }
                         }
+                        else
+                        {
+                            if (System.IO.File.Exists(path))
+                            {
+                                var sourceData = System.IO.File.ReadAllBytes(path);
+                                scr.GizmoData.Texture = new Texture2D(2, 2);
+                                scr.GizmoData.Texture.LoadImage(sourceData);
+                                scr.GizmoData.Texture.Apply();
+                                UpdateScale(scr, scr.ImageFileSource.Scale);
+                                if (SceneView.lastActiveSceneView)
+                                {
+                                    SceneView.lastActiveSceneView.Repaint();
+                                }
+                            }
+                        }
+
                         break;
                     case ImageTargetController.DataSource.TargetDataFile:
                         path = scr.TargetDataFileSource.Path;
@@ -212,46 +257,100 @@ namespace easyar
                         {
                             path = Application.streamingAssetsPath + "/" + scr.TargetDataFileSource.Path;
                         }
-                        if (System.IO.File.Exists(path))
+
+                        if (scr.ImageFileSource.PathType == PathType.Addressable)
                         {
-                            if (!EasyARController.Initialized)
+                            if (AddressableExtension.TryGetAssetEntryFromAddr(path, out var entry))
                             {
-                                EasyARController.Initialize();
                                 if (!EasyARController.Initialized)
                                 {
-                                    Debug.LogWarning("EasyAR Sense target data gizmo enabled but license key validation failed, target data gizmo will not show");
-                                }
-                            }
-                            var sourceData = System.IO.File.ReadAllBytes(path);
-
-                            using (Buffer buffer = Buffer.wrapByteArray(sourceData))
-                            {
-                                var targetOptional = ImageTarget.createFromTargetData(buffer);
-                                if (targetOptional.OnSome)
-                                {
-                                    using (ImageTarget target = targetOptional.Value)
+                                    EasyARController.Initialize();
+                                    if (!EasyARController.Initialized)
                                     {
-                                        var imageList = target.images();
-                                        if (imageList.Count > 0)
+                                        Debug.LogWarning("EasyAR Sense target data gizmo enabled but license key validation failed, target data gizmo will not show");
+                                    }
+                                }
+
+                                var sourceData = System.IO.File.ReadAllBytes($"{System.IO.Directory.GetCurrentDirectory()}\\{entry.AssetPath}");
+
+                                using (Buffer buffer = Buffer.wrapByteArray(sourceData))
+                                {
+                                    var targetOptional = ImageTarget.createFromTargetData(buffer);
+                                    if (targetOptional.OnSome)
+                                    {
+                                        using (ImageTarget target = targetOptional.Value)
                                         {
-                                            var image = imageList[0];
-                                            scr.GizmoData.Texture = new Texture2D(image.width(), image.height(), TextureFormat.R8, false);
-                                            scr.GizmoData.Texture.LoadRawTextureData(image.buffer().data(), image.buffer().size());
-                                            scr.GizmoData.Texture.Apply();
-                                        }
-                                        foreach (var image in imageList)
-                                        {
-                                            image.Dispose();
-                                        }
-                                        UpdateScale(scr, target.scale());
-                                        if (SceneView.lastActiveSceneView)
-                                        {
-                                            SceneView.lastActiveSceneView.Repaint();
+                                            var imageList = target.images();
+                                            if (imageList.Count > 0)
+                                            {
+                                                var image = imageList[0];
+                                                scr.GizmoData.Texture = new Texture2D(image.width(), image.height(), TextureFormat.R8, false);
+                                                scr.GizmoData.Texture.LoadRawTextureData(image.buffer().data(), image.buffer().size());
+                                                scr.GizmoData.Texture.Apply();
+                                            }
+
+                                            foreach (var image in imageList)
+                                            {
+                                                image.Dispose();
+                                            }
+
+                                            UpdateScale(scr, target.scale());
+                                            if (SceneView.lastActiveSceneView)
+                                            {
+                                                SceneView.lastActiveSceneView.Repaint();
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        else
+                        {
+                            if (System.IO.File.Exists(path))
+                            {
+                                if (!EasyARController.Initialized)
+                                {
+                                    EasyARController.Initialize();
+                                    if (!EasyARController.Initialized)
+                                    {
+                                        Debug.LogWarning("EasyAR Sense target data gizmo enabled but license key validation failed, target data gizmo will not show");
+                                    }
+                                }
+
+                                var sourceData = System.IO.File.ReadAllBytes(path);
+
+                                using (Buffer buffer = Buffer.wrapByteArray(sourceData))
+                                {
+                                    var targetOptional = ImageTarget.createFromTargetData(buffer);
+                                    if (targetOptional.OnSome)
+                                    {
+                                        using (ImageTarget target = targetOptional.Value)
+                                        {
+                                            var imageList = target.images();
+                                            if (imageList.Count > 0)
+                                            {
+                                                var image = imageList[0];
+                                                scr.GizmoData.Texture = new Texture2D(image.width(), image.height(), TextureFormat.R8, false);
+                                                scr.GizmoData.Texture.LoadRawTextureData(image.buffer().data(), image.buffer().size());
+                                                scr.GizmoData.Texture.Apply();
+                                            }
+
+                                            foreach (var image in imageList)
+                                            {
+                                                image.Dispose();
+                                            }
+
+                                            UpdateScale(scr, target.scale());
+                                            if (SceneView.lastActiveSceneView)
+                                            {
+                                                SceneView.lastActiveSceneView.Repaint();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         break;
                     case ImageTargetController.DataSource.Target:
                         if (scr.Target != null)
@@ -264,16 +363,19 @@ namespace easyar
                                 scr.GizmoData.Texture.LoadRawTextureData(image.buffer().data(), image.buffer().size());
                                 scr.GizmoData.Texture.Apply();
                             }
+
                             foreach (var image in imageList)
                             {
                                 image.Dispose();
                             }
+
                             UpdateScale(scr, (scr.Target as ImageTarget).scale());
                             if (SceneView.lastActiveSceneView)
                             {
                                 SceneView.lastActiveSceneView.Repaint();
                             }
                         }
+
                         break;
                     default:
                         break;
@@ -285,6 +387,7 @@ namespace easyar
                     scr.GizmoData.Texture.LoadImage(new byte[0]);
                     scr.GizmoData.Texture.Apply();
                 }
+
                 scr.GizmoData.Signature = signature;
             }
 
@@ -299,6 +402,7 @@ namespace easyar
                 {
                     scr.GizmoData.Material.SetInt("_isRenderGrayTexture", 0);
                 }
+
                 scr.GizmoData.Material.SetFloat("_Ratio", (float)scr.GizmoData.Texture.height / scr.GizmoData.Texture.width);
                 Gizmos.DrawGUITexture(new Rect(0, 0, 1, 1), scr.GizmoData.Texture, scr.GizmoData.Material);
             }

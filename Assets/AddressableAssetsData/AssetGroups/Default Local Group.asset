@@ -18,7 +18,12 @@ MonoBehaviour:
   m_GUID: aaeac9eae8ad4664594fbd686213304c
   m_SerializeEntries:
   - m_GUID: 555bf09fb0255f6408b3acce05713f49
-    m_Address: Assets/Test/Cylinder.prefab
+    m_Address: Cylinder
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a6b0ed77fafc0f4aa3c444eb3d2e316
+    m_Address: "Assets/Test/\u6CB3\u9A6C.jpg"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -28,7 +28,7 @@ MonoBehaviour:
   GlobalSpatialMapServiceConfig:
     APIKey: 341c429265c1d2908be2c1ed888a95e7
     APISecret: bafcba0e9b45e4e63e68f5cc530580ccbe89cf5f4664112b6c262d5a8c9bd39c
-    SparseSpatialMapAppID: 
+    SparseSpatialMapAppID: C:CN1:95d16b3dd64d9e1be317a669329d3667
   GlobalCloudRecognizerServiceConfig:
     ServerAddress: https://b750697f01d9cfcffd5ff38d0bd8b7d9.cn1.crs.easyar.com:8443
     APIKey: 341c429265c1d2908be2c1ed888a95e7
