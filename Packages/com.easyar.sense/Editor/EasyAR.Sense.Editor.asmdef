@@ -13,7 +13,9 @@
         "NRSDK",
         "Unity.XR.CoreUtils",
         "Unity.Addressables.Editor",
-        "Unity.Addressables.Editor.Tests"
+        "Unity.Addressables.Editor.Tests",
+        "Unity.ResourceManager",
+        "Unity.ResourceManager.Tests"
     ],
     "includePlatforms": [
         "Editor"

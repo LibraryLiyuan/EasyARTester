@@ -22,8 +22,8 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1a6b0ed77fafc0f4aa3c444eb3d2e316
-    m_Address: "Assets/Test/\u6CB3\u9A6C.jpg"
+  - m_GUID: 340fb9f09883f8842920f79f9cc61df5
+    m_Address: "Assets/Test/\u6CB3\u9A6C.jpg.bytes"
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

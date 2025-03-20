@@ -13,7 +13,9 @@ using System.IO;
 using UnityEditor;
 #endif
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Networking;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace easyar
 {
@@ -99,35 +101,62 @@ namespace easyar
                 yield break;
             }
             var path = filePath;
-            if (filePathType == PathType.StreamingAssets)
+            if (filePathType == PathType.Addressable)
             {
-                path = Application.streamingAssetsPath + "/" + path;
-            }
-            using (var request = UnityWebRequest.Get(PathToUrl(path)))
-            {
-                yield return request.SendWebRequest();
+                // TODO: Addressable Load
+                var operationHandle = Addressables.LoadAssetAsync<TextAsset>(path);
+                yield return operationHandle.WaitForCompletion();
                 var error = $"fail to load file {filePath} of type {filePathType}";
-#if UNITY_2020_1_OR_NEWER
-                if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.DataProcessingError)
-#else
-                if (request.isHttpError || request.isNetworkError)
-#endif
+                if (operationHandle.Status == AsyncOperationStatus.Failed || operationHandle.Status == AsyncOperationStatus.None)
                 {
-                    Debug.LogError($"{error}: {request.error}");
-                    onError?.Invoke($"{error}: {request.error}");
+                    Debug.LogError($"{error}: {operationHandle.Status} {operationHandle.OperationException}");
+                    onError?.Invoke($"{error}: {operationHandle.Status} {operationHandle.OperationException}");
                     yield break;
                 }
-                while (!request.isDone)
+                while (!operationHandle.IsDone)
                 {
                     yield return 0;
                 }
-                if (request.downloadHandler.data == null)
+                if (operationHandle.Result == null)
                 {
                     Debug.LogError($"{error}: data is null");
                     onError?.Invoke($"{error}: data is null");
                     yield break;
                 }
-                onLoad(request.downloadHandler.data);
+                onLoad(operationHandle.Result.bytes);
+            }
+            else
+            {
+                if (filePathType == PathType.StreamingAssets)
+                {
+                    path = Application.streamingAssetsPath + "/" + path;
+                }
+                using (var request = UnityWebRequest.Get(PathToUrl(path)))
+                {
+                    yield return request.SendWebRequest();
+                    var error = $"fail to load file {filePath} of type {filePathType}";
+#if UNITY_2020_1_OR_NEWER
+                    if (request.result == UnityWebRequest.Result.ProtocolError || request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.DataProcessingError)
+#else
+                if (request.isHttpError || request.isNetworkError)
+#endif
+                    {
+                        Debug.LogError($"{error}: {request.error}");
+                        onError?.Invoke($"{error}: {request.error}");
+                        yield break;
+                    }
+                    while (!request.isDone)
+                    {
+                        yield return 0;
+                    }
+                    if (request.downloadHandler.data == null)
+                    {
+                        Debug.LogError($"{error}: data is null");
+                        onError?.Invoke($"{error}: data is null");
+                        yield break;
+                    }
+                    onLoad(request.downloadHandler.data);
+                }
             }
         }
 

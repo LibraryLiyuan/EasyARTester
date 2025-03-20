@@ -398,7 +398,7 @@ GameObject:
   - component: {fileID: 251618871}
   - component: {fileID: 251618870}
   m_Layer: 0
-  m_Name: ImageTarget-idback (1)
+  m_Name: ImageTarget-idback
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -421,7 +421,7 @@ MonoBehaviour:
   SourceType: 0
   ImageFileSource:
     PathType: 2
-    Path: "Assets/Test/\u6CB3\u9A6C.jpg"
+    Path: "Assets/Test/\u6CB3\u9A6C.jpg.bytes"
     Name: "\u6CB3\u9A6C"
     Scale: 0.1
   TargetDataFileSource:

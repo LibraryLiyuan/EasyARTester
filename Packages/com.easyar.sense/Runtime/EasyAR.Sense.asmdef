@@ -8,7 +8,9 @@
         "Unity.RenderPipelines.Universal.Runtime",
         "NRSDK",
         "Unity.Addressables",
-        "Unity.Addressables.Tests"
+        "Unity.Addressables.Tests",
+        "Unity.ResourceManager",
+        "Unity.ResourceManager.Tests"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
